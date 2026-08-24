@@ -7,21 +7,52 @@
   "appPath": "todo-webapp",
   "entrypoint": "deployment/web-application",
   "exposure": "internet",
-  "stories": [1, 2, 3, 4, 5],
+  "stories": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "description": "Single-page React app where a signed-in user creates todos, views their own list, and marks todos complete. Talks only to todo-api for data; holds no database credentials itself.",
   "dependencies": [
     {
       "kind": "component",
       "name": "todo-api",
-      "description": "Backend API this app calls to create todos, list a signed-in user's todos, and mark one complete."
+      "description": "Backend API this app calls to create todos, list a signed-in user's todos, and mark one complete.",
+      "wiring": {
+        "endpoint": {
+          "component": "small-todo-we-todo-api",
+          "name": "http",
+          "visibility": "project",
+          "envBindings": {
+            "address": "TODO_API_URL"
+          }
+        }
+      }
     },
     {
       "kind": "platform-resource",
       "name": "user-auth",
+      "description": "Thunder sign-in for the browser app — OIDC client config used to authenticate the user via PKCE.",
       "resourceType": "thunder-app",
-      "parameters": { "scopes": "openid profile email" },
-      "description": "Thunder sign-in for the browser app — OIDC client config used to authenticate the user via PKCE."
+      "parameters": {
+        "scopes": "openid profile email"
+      },
+      "wiring": {
+        "ref": "small-todo-we-user-auth",
+        "envBindings": {
+          "client_id": "USER_AUTH_CLIENT_ID",
+          "issuer": "USER_AUTH_ISSUER",
+          "jwks_url": "USER_AUTH_JWKS_URL",
+          "scopes": "USER_AUTH_SCOPES"
+        }
+      }
     }
   ],
-  "description": "Single-page React app where a signed-in user creates todos, views their own list, and marks todos complete. Talks only to todo-api for data; holds no database credentials itself.",
-  "skillsPinned": ["wireframes", "react-webapp", "thunder-authentication"]
+  "skillsPinned": [
+    "wireframes",
+    "react-webapp",
+    "thunder-authentication"
+  ]
 }
