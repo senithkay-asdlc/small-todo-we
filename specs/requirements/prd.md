@@ -21,24 +21,24 @@ todos, and marks todos as complete.
 
 1. As a User, I want to sign in, so that my todos are kept private to me.
 2. As a User, I want to create a todo item, so that I can capture a task I
- need to do.
+need to do.
 3. As a User, I want my created todo to be saved, so that it's not lost when I
- close or reload the app.
+close or reload the app.
 4. As a User, I want to see the list of todos I've created, so that I know
- what I still need to do.
+what I still need to do.
 5. As a User, I want to mark a todo as complete, so that I can track my
- progress and see what's done.
+progress and see what's done.
 
 ## Product Decisions
 
 - Sign-in is via SSO through Thunder, the platform identity provider (org
 default).
 - Each User only ever sees and manages their own todos — one user's list is
-never visible to another. *assumed*
+never visible to another.
 - A todo has just a short text description and a complete/incomplete status —
-no due date, priority, or category in this version. *assumed*
+no due date, priority, or category in this version.
 - Once created, a todo's text cannot be edited or deleted — the only state
-change is marking it complete. *assumed*
+change is marking it complete.
 
 ## Out of Scope
 
