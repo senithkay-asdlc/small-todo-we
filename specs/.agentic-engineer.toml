@@ -1,0 +1,4 @@
+apiVersion = "agentic-engineer/v1"
+name = "small-todo-we"
+createdAt = "2026-08-24T11:36:44Z"
+idea = "a small todo we app. user logs in and create todos and save which saves the todo to a database. and he case see the created todods and mark them as complete"
