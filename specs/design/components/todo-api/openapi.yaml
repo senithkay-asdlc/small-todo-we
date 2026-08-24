@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Todo API
+  version: 0.1.0
+  description: Create, list, and complete a signed-in user's todos.
+servers:
+  - url: /
+security:
+  - bearerAuth: []
+paths:
+  /todos:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      operationId: listTodos
+      summary: List the caller's todos
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20, maximum: 100 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+        - name: completed
+          in: query
+          description: Filter by complete/incomplete status
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: Page of the caller's todos
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [count, data]
+                properties:
+                  count: { type: integer, description: total matching items }
+                  next: { type: string, nullable: true, description: relative URI of the next page }
+                  previous: { type: string, nullable: true, description: relative URI of the previous page }
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Todo' }
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    post:
+      operationId: createTodo
+      summary: Create a new todo for the caller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NewTodo' }
+      responses:
+        '201':
+          description: Todo created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Todo' }
+        '400':
+          description: Invalid todo text
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /todos/{todoId}/complete:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+      - $ref: '#/components/parameters/TodoId'
+    post:
+      operationId: completeTodo
+      summary: Mark the caller's todo as complete
+      responses:
+        '200':
+          description: Todo marked complete
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Todo' }
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: No such todo for this caller
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+components:
+  parameters:
+    UserId:
+      name: X-User-Id
+      in: header
+      required: true
+      description: caller identity injected by the gateway from the validated token
+      schema: { type: string }
+    TodoId:
+      name: todoId
+      in: path
+      required: true
+      schema: { type: string }
+  schemas:
+    NewTodo:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, description: the todo's short description }
+    Todo:
+      type: object
+      required: [id, text, completed, createdAt]
+      properties:
+        id: { type: string }
+        text: { type: string }
+        completed: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: integer, description: HTTP or application error code }
+        message: { type: string, description: short human-readable label }
+        description: { type: string, description: detailed explanation }
+        moreInfo: { type: string, description: URI to documentation }
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }

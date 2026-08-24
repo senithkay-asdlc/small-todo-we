@@ -1,0 +1,12 @@
+{
+  "name": "todo-db",
+  "type": "platform-resource",
+  "version": "0.1.0",
+  "language": "N/A",
+  "buildpack": "docker",
+  "appPath": "todo-db",
+  "entrypoint": "deployment/service",
+  "exposure": "intranet",
+  "dependencies": [],
+  "description": "Managed Postgres database provisioned for todo-api; holds the todos table only."
+}
